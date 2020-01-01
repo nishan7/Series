@@ -1,1 +1,34 @@
-{"punisher": "A:\\!Series\\punisher\\ps2\\The.Punisher.S02E01.1080p.WEB-DL.6CH.x264.mkv", "Vikings": "A:\\!Series\\Vikings\\Season 5\\Vikings - S05E14.mkv", "The Office (US)": "A:\\!Series\\The Office (US)\\Season 9\\The Office (US) - S09E22.mkv"}
+{
+    "2 Broke Girls": [
+        "A:\\!Series\\2 Broke Girls\\Season 2\\2 Broke Girls - S02E03.mkv",
+        0
+    ],
+    "It's Always Sunny in Philadelphia": [
+        "A:\\!Series\\It's Always Sunny in Philadelphia\\Season 3\\It's Always Sunny in Philadelphia - S03E02.mkv",
+        1
+    ],
+    "Brooklyn Nine-Nine": [
+        "A:\\!Series\\Brooklyn Nine-Nine\\Season 2\\Brooklyn Nine-Nine - S02E23.mkv",
+        2
+    ],
+    "Rules of Engagement": [
+        "A:\\!Series\\Rules of Engagement\\Season 5\\Rules of Engagement - S05E24.avi",
+        3
+    ],
+    "Vikings": [
+        "A:\\!Series\\Vikings\\Season 5\\Vikings - S05E14.mkv",
+        4
+    ],
+    "Mad Men": [
+        "A:\\!Series\\Mad Men\\Season 1\\Mad Men - S01E08.mkv",
+        5
+    ],
+    "punisher": [
+        "A:\\!Series\\punisher\\ps2\\The.Punisher.S02E01.1080p.WEB-DL.6CH.x264.mkv",
+        6
+    ],
+    "The Office (US)": [
+        "A:\\!Series\\The Office (US)\\Season 9\\The Office (US) - S09E22.mkv",
+        7
+    ]
+}
