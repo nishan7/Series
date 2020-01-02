@@ -10,15 +10,15 @@ import json, re,os
 class Read:
     # key_string = ''
     path = ''
-    display_dict=dict()
+    display_dict=dict();
 
     def __init__(self, path):
+        print("---------data python Script--------------")
         self.key_string = r'Software\MPC-HC\MPC-HC\Recent File List'
         self.files_dict = dict()
         # self.path = r'A:\!Series'
-        if not os.path.exists(path): return
+        if not os.path.exists(path): self.create_display_dict()
         self.path= path
-        self.display_dict = {}
         self.read()
 
     def read(self):
@@ -68,6 +68,7 @@ class Read:
             self.display_dict = {**self.files_dict, **js}
         print(json.dumps(self.display_dict, indent=4))
         self.store_as_json(self.display_dict)
+        print("saved display_dict")
 
 
 obj = Read('')

@@ -5,8 +5,11 @@
 # Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
+# from PySide2.QtCore import Slot
+from PyQt5.QtCore import pyqtSlot
 
 import data
+import os
 from PyQt5 import QtCore, QtWidgets
 
 
@@ -20,7 +23,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
 
-        ## Central Widget
+        # Central Widget
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
@@ -56,7 +59,8 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setSpacing(5)
 
 #####Adding the buttons
-        self.addButtons()
+        files_names = data_obj.display_dict.keys()
+        self.addButtons(files_names)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 2, 0, 1, 1)
@@ -75,6 +79,14 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        #
+        # for b in self.buttons:
+        #     # b.clicked.connect(lambda : self.action(b.text()))
+        #     print(b)
+        i=0
+        for b in self.buttons:
+            self.buttons[i].clicked.connect(lambda: self.action(i))
+            i+=1
 
 
 
@@ -87,11 +99,11 @@ class Ui_MainWindow(object):
         # self.pushButton2.setText(_translate("MainWindow", "PushButton2"))
         # self.pushButton3.setText(_translate("MainWindow", "PushButton3"))
 
-    def addButtons(self):
-        lst = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12', 'b13', 'b14', 'b15', 'b16',
-               'b17', 'b18']
-
-        buttons = list()
+    def addButtons(self, lst):
+        # lst = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12', 'b13', 'b14', 'b15', 'b16',
+        #        'b17', 'b18']
+        print(lst);
+        self.buttons = list()
         i = 1
         j = 0
         for item in lst:
@@ -109,8 +121,17 @@ class Ui_MainWindow(object):
             self.gridLayout_2.addWidget(self.pushButton, i, j, 1, 1)
             j = (j + 1) % 3
             if j == 0: i += 1
-            buttons.append(self.pushButton)
+            self.buttons.append(self.pushButton)
+            # self.pushButton.clicked.connect(lambda: self.action(i+j))
 
+
+    # @pyqtSlot()
+    def action(self,var):
+        print(var)
+        print()
+
+    def action2(self, var):
+        print(var+" 2")
 
 
 if __name__ == "__main__":
@@ -123,6 +144,7 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
 
     data_obj=data.Read(query)
+
 
     ui.setupUi(MainWindow,data_obj)
     MainWindow.show()
