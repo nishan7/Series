@@ -1,26 +1,19 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'ui.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.2
-#
-# WARNING! All changes made in this file will be lost!
-# from PySide2.QtCore import Slot
 
 import os
-
+import subprocess
 from PyQt5 import QtCore, QtWidgets
-
 import data
 from uiTest import Ui_MainWindow
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self,data_obj, parent=None):
+    def __init__(self, data_obj, parent=None):
         super(MainWindow, self).__init__(parent=parent)
-        self.setupUi(self, data_obj)
+        self.setupUi(self)
+        self.data_obj = data_obj
+        # print(self.data_obj.display_dict)
 
-    def setupUi(self, MainWindow, data_obj):
+    def setupUi(self):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(720, 500)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -61,14 +54,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 985, 706))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
 
+
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.gridLayout_2.setContentsMargins(5, 5, 5, 5)
         self.gridLayout_2.setSpacing(5)
 
-        #####Adding the buttons
-        files_names = data_obj.display_dict.keys()
-        self.addButtons(files_names)
+        # Adding the buttons in gridLayout_2
+
+        self.addButtons()
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 2, 0, 1, 1)
@@ -87,33 +81,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        i=0
-        for b in self.buttons:
-            b.clicked.connect(self.action)
-            # print(b)
-            i = i + 1
 
-        # #
-        # self.buttons[0].clicked.connect(lambda: self.action(0))
-        # self.buttons[1].clicked.connect(lambda: self.action(1))
-        # self.buttons[2].clicked.connect(lambda: self.action(2))
-        # self.buttons[3].clicked.connect(lambda: self.action(3))
-        # self.buttons[4].clicked.connect(lambda: self.action(4))
-        # self.buttons[5].clicked.connect(lambda: self.action(5))
+        for b in self.buttons:
+            b.installEventFilter(self)
+            # print(b)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Series Tracker"))
         self.label.setText(_translate("MainWindow", "Enter Series Name:"))
         self.search_button.setText(_translate("MainWindow", "Search"))
-        # self.pushButton.setText(_translate("MainWindow", "PushButton1"))
-        # self.pushButton2.setText(_translate("MainWindow", "PushButton2"))
-        # self.pushButton3.setText(_translate("MainWindow", "PushButton3"))
 
-    def addButtons(self, lst):
-        # lst = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12', 'b13', 'b14', 'b15', 'b16',
-        #        'b17', 'b18']
-        print(lst);
+    def addButtons(self):
+        lst = self.data_obj.display_dict.keys()
         self.buttons = list()
         i = 1
         j = 0
@@ -133,23 +113,48 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             j = (j + 1) % 3
             if j == 0: i += 1
             self.buttons.append(self.pushButton)
-            # self.pushButton.clicked.connect(lambda: self.action(i+j))
-            # self.pushButton.event()
+
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.MouseButtonPress:
+            if event.button() == QtCore.Qt.LeftButton:
+                print(obj.objectName(), "Left click")
+                self.actionLeft(obj)
+
+            elif event.button() == QtCore.Qt.RightButton:
+                print(obj.objectName(), "Right click")
+                self.actionRight(obj)
+
+            elif event.button() == QtCore.Qt.MiddleButton:
+                print(obj.objectName(), "Middle click")
+        return QtCore.QObject.event(obj, event)
 
     # @pyqtSlot()
-    def action(self):
+    def actionLeft(self, obj):
+        # print(self.sender().text())
+        print(self.data_obj.display_dict[obj.text()][0])
+        os.startfile(self.data_obj.display_dict[obj.text()][0])
 
-        print(self.sender().text())
-        print()
+    def actionRight(self, obj):
+        subprocess.Popen(r'explorer /select, ' + self.data_obj.display_dict[obj.text()][0])
 
     def query_text(self, var):
         if not os.path.exists(var): self.invalid_path_alert()
+
         with open('search.txt', 'w') as fp:
             fp.write(var)
-        # self.gridLayout_2.removeItem(self.pushButton)
-        # self.search_button.clicked.connect(self.scrollArea.)
+
+        # Clear the gridlayout_2 (all the buttons)
+        for i in reversed(range(self.gridLayout_2.count())):
+            self.gridLayout_2.itemAt(i).widget().setParent(None)
+
+        # Again read the values from data.py
         data_obj.path = var
         data_obj.read()
+
+        # Update new Buttons
+        self.addButtons()
+        self.scrollArea.update()
+        self.scrollArea.repaint()
 
     def invalid_path_alert(self):
         msg = QtWidgets.QMessageBox()
@@ -162,13 +167,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.gridLayout_2.removeItem(b)
 
 
-# class MainWindow(QtWidgets.QMainWindow):
-#     def __init__(self, parent=None):
-#         super(MainWindow, self).__init__(parent=parent)
-#         ui = Ui_MainWindow()
-#         ui.setupUi(self, data_obj)
-#
-
 import sys
 
 if __name__ == "__main__":
@@ -180,17 +178,3 @@ if __name__ == "__main__":
     w = MainWindow(data_obj)
     w.show()
     sys.exit(app.exec_())
-
-# if __name__ == "__main__":
-#     import sys
-#
-#     with open('search.txt') as fp:
-#         query = fp.read()
-#     data_obj = data.Read(query)
-#
-#     app = QtWidgets.QApplication(sys.argv)
-#     MainWindow = QtWidgets.QMainWindow()
-#     ui = Ui_MainWindow()
-#     ui.setupUi(MainWindow, data_obj)
-#     MainWindow.show()
-#     sys.exit(app.exec_())
