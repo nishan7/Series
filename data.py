@@ -1,6 +1,7 @@
+from typing import Dict, Any
 from winreg import *
 import pandas as pd
-import json, re
+import json, re,os
 
 
 # from collections import OrderedDict
@@ -8,20 +9,27 @@ import json, re
 
 class Read:
     # key_string = ''
-    # path = 'A:\\!Series'
+    path = ''
+    display_dict=dict()
 
-    def __init__(self):
+    def __init__(self, path):
         self.key_string = r'Software\MPC-HC\MPC-HC\Recent File List'
         self.files_dict = dict()
-        self.path = r'A:\!Series'
+        # self.path = r'A:\!Series'
+        if not os.path.exists(path): return
+        self.path= path
         self.display_dict = {}
+        self.read()
 
     def read(self):
+        if self.path =='': return
+        print(self.path)
         with OpenKey(HKEY_CURRENT_USER, self.key_string) as key:
             order = 0
             for i in range(0, 25):
                 try:
                     name, value, index = EnumValue(key, i)
+
                 except WindowsError:
                     break
 
@@ -33,14 +41,16 @@ class Read:
                     if value[i] == '\\':  break
                     series_name = series_name + value[i]
 
-                # print(series_name)
+                print(series_name)
                 if series_name in self.files_dict.keys(): continue
                 self.files_dict[series_name] = [value, order]
                 order = order + 1
 
+        # print(self.files_dict)
+        self.create_display_dict()
         # print(order)
         # print(pd.Series(self.files_dict))
-        # print(self.files_dict)
+
 
     def store_as_json(self, dict_file):
         with open('file_data.json', 'w') as fp:
@@ -60,7 +70,7 @@ class Read:
         self.store_as_json(self.display_dict)
 
 
-obj = Read()
-obj.read()
-# obj.store_as_json()
-obj.create_display_dict()
+obj = Read('')
+# obj.read()
+# # obj.store_as_json()
+# obj.create_display_dict()

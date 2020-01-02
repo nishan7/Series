@@ -6,12 +6,12 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-
+import data
 from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, data_obj):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(720, 500)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -76,7 +76,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        # self.change()
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -115,10 +115,15 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
+    with open('search.txt') as fp:
+        query = fp.read()
 
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+
+    data_obj=data.Read(query)
+
+    ui.setupUi(MainWindow,data_obj)
     MainWindow.show()
     sys.exit(app.exec_())
