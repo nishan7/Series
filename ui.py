@@ -4,7 +4,8 @@ import subprocess
 import sys
 
 from PyQt5 import QtCore, QtWidgets
-
+# from PyQt5.uic.properties import QtGui
+# from termcolor import colored, cprint
 import data
 from uiTest import Ui_MainWindow
 
@@ -174,6 +175,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for b in self.buttons:
             self.gridLayout_2.removeItem(b)
 
+    # def closeEvent(self, *args, **kwargs):
+    #     super(QtGui.QMainWindow, self).closeEvent(*args, **kwargs)
+    #     print("Close")
+    #
+    # def closeEvent(self):
+    #     #Your desired functionality here
+    #     print('Close button pressed')
+    #     import sys
+    #     sys.exit(0)
 
 if __name__ == "__main__":
     with open('search.txt') as fp:
@@ -183,5 +193,11 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow(data_obj)
     w.show()
-    print("when it will be done")
-    sys.exit(app.exec_())
+
+    ret = app.exec_()
+    # Your code that must run when the application closes goes here
+
+    # print(colored("when it will be done","red"))
+    data_obj.read()
+    # sys.exit(app.exec_())
+    sys.exit(ret)
