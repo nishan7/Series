@@ -1,7 +1,10 @@
-
 import os
+import re
 import subprocess
+import sys
+
 from PyQt5 import QtCore, QtWidgets
+
 import data
 from uiTest import Ui_MainWindow
 
@@ -9,13 +12,12 @@ from uiTest import Ui_MainWindow
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, data_obj, parent=None):
         super(MainWindow, self).__init__(parent=parent)
-        self.setupUi(self)
         self.data_obj = data_obj
-        # print(self.data_obj.display_dict)
+        self.setupUi(self)
 
-    def setupUi(self):
+    def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(720, 500)
+        MainWindow.resize(800, 500)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -54,7 +56,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 985, 706))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
 
-
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.gridLayout_2.setContentsMargins(5, 5, 5, 5)
@@ -82,6 +83,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        self.signal_handling()
+
+    def signal_handling(self):
         for b in self.buttons:
             b.installEventFilter(self)
             # print(b)
@@ -99,12 +103,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         j = 0
         for item in lst:
             self.pushButton = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
+            self.pushButton.setStyleSheet('''text-align:left;''')
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
             sizePolicy.setHorizontalStretch(0)
             sizePolicy.setVerticalStretch(0)
             sizePolicy.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
             self.pushButton.setSizePolicy(sizePolicy)
-            self.pushButton.setText(item)
+            placeholder = re.match(r'.*\\(.+?)$', self.data_obj.display_dict[item][0]).group(1)
+            self.pushButton.setText(" " + placeholder)
             self.pushButton.setMinimumWidth(200)
             self.pushButton.setMinimumHeight(150)
 
@@ -131,11 +137,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # @pyqtSlot()
     def actionLeft(self, obj):
         # print(self.sender().text())
-        print(self.data_obj.display_dict[obj.text()][0])
-        os.startfile(self.data_obj.display_dict[obj.text()][0])
+        print(self.data_obj.display_dict[obj.objectName()][0])
+        os.startfile(self.data_obj.display_dict[obj.objectName()][0])
 
     def actionRight(self, obj):
-        subprocess.Popen(r'explorer /select, ' + self.data_obj.display_dict[obj.text()][0])
+        subprocess.Popen(r'explorer /select, ' + self.data_obj.display_dict[obj.objectName()][0])
 
     def query_text(self, var):
         if not os.path.exists(var): self.invalid_path_alert()
@@ -153,6 +159,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Update new Buttons
         self.addButtons()
+        self.signal_handling()
+        # self.setupUi(self, MainWindow)
         self.scrollArea.update()
         self.scrollArea.repaint()
 
@@ -167,8 +175,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.gridLayout_2.removeItem(b)
 
 
-import sys
-
 if __name__ == "__main__":
     with open('search.txt') as fp:
         query = fp.read()
@@ -177,4 +183,5 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow(data_obj)
     w.show()
+    print("when it will be done")
     sys.exit(app.exec_())
