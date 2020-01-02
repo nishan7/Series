@@ -12,9 +12,14 @@ import os
 from PyQt5 import QtCore, QtWidgets
 
 import data
+from uiTest import Ui_MainWindow
 
 
-class Ui_MainWindow(object):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self,data_obj, parent=None):
+        super(MainWindow, self).__init__(parent=parent)
+        self.setupUi(self, data_obj)
+
     def setupUi(self, MainWindow, data_obj):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(720, 500)
@@ -82,11 +87,11 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        # i=0
+        i=0
         for b in self.buttons:
-            b.clicked.connect(self.action())
-            print(b)
-            i=i+1
+            b.clicked.connect(self.action)
+            # print(b)
+            i = i + 1
 
         # #
         # self.buttons[0].clicked.connect(lambda: self.action(0))
@@ -134,7 +139,7 @@ class Ui_MainWindow(object):
     # @pyqtSlot()
     def action(self):
 
-        print(self.sender())
+        print(self.sender().text())
         print()
 
     def query_text(self, var):
@@ -157,18 +162,35 @@ class Ui_MainWindow(object):
             self.gridLayout_2.removeItem(b)
 
 
-if __name__ == "__main__":
-    import sys
+# class MainWindow(QtWidgets.QMainWindow):
+#     def __init__(self, parent=None):
+#         super(MainWindow, self).__init__(parent=parent)
+#         ui = Ui_MainWindow()
+#         ui.setupUi(self, data_obj)
+#
 
+import sys
+
+if __name__ == "__main__":
     with open('search.txt') as fp:
         query = fp.read()
-
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-
     data_obj = data.Read(query)
 
-    ui.setupUi(MainWindow, data_obj)
-    MainWindow.show()
+    app = QtWidgets.QApplication(sys.argv)
+    w = MainWindow(data_obj)
+    w.show()
     sys.exit(app.exec_())
+
+# if __name__ == "__main__":
+#     import sys
+#
+#     with open('search.txt') as fp:
+#         query = fp.read()
+#     data_obj = data.Read(query)
+#
+#     app = QtWidgets.QApplication(sys.argv)
+#     MainWindow = QtWidgets.QMainWindow()
+#     ui = Ui_MainWindow()
+#     ui.setupUi(MainWindow, data_obj)
+#     MainWindow.show()
+#     sys.exit(app.exec_())
