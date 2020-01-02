@@ -6,11 +6,12 @@
 #
 # WARNING! All changes made in this file will be lost!
 # from PySide2.QtCore import Slot
-from PyQt5.QtCore import pyqtSlot
+
+import os
+
+from PyQt5 import QtCore, QtWidgets
 
 import data
-import os
-from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_MainWindow(object):
@@ -37,10 +38,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.series_text_field = QtWidgets.QLineEdit(self.centralwidget)
         self.series_text_field.setObjectName("series_text_field")
+        self.series_text_field.setText(data_obj.path)
         self.horizontalLayout.addWidget(self.series_text_field)
 
         self.search_button = QtWidgets.QPushButton(self.centralwidget)
         self.search_button.setObjectName("search_button")
+        self.search_button.clicked.connect(lambda: self.query_text(self.series_text_field.text()))
         self.horizontalLayout.addWidget(self.search_button)
 
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
@@ -58,7 +61,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(5, 5, 5, 5)
         self.gridLayout_2.setSpacing(5)
 
-#####Adding the buttons
+        #####Adding the buttons
         files_names = data_obj.display_dict.keys()
         self.addButtons(files_names)
 
@@ -79,16 +82,19 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        #
-        # for b in self.buttons:
-        #     # b.clicked.connect(lambda : self.action(b.text()))
-        #     print(b)
-        i=0
+        # i=0
         for b in self.buttons:
-            self.buttons[i].clicked.connect(lambda: self.action(i))
-            i+=1
+            b.clicked.connect(self.action())
+            print(b)
+            i=i+1
 
-
+        # #
+        # self.buttons[0].clicked.connect(lambda: self.action(0))
+        # self.buttons[1].clicked.connect(lambda: self.action(1))
+        # self.buttons[2].clicked.connect(lambda: self.action(2))
+        # self.buttons[3].clicked.connect(lambda: self.action(3))
+        # self.buttons[4].clicked.connect(lambda: self.action(4))
+        # self.buttons[5].clicked.connect(lambda: self.action(5))
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -123,19 +129,37 @@ class Ui_MainWindow(object):
             if j == 0: i += 1
             self.buttons.append(self.pushButton)
             # self.pushButton.clicked.connect(lambda: self.action(i+j))
-
+            # self.pushButton.event()
 
     # @pyqtSlot()
-    def action(self,var):
-        print(var)
+    def action(self):
+
+        print(self.sender())
         print()
 
-    def action2(self, var):
-        print(var+" 2")
+    def query_text(self, var):
+        if not os.path.exists(var): self.invalid_path_alert()
+        with open('search.txt', 'w') as fp:
+            fp.write(var)
+        # self.gridLayout_2.removeItem(self.pushButton)
+        # self.search_button.clicked.connect(self.scrollArea.)
+        data_obj.path = var
+        data_obj.read()
+
+    def invalid_path_alert(self):
+        msg = QtWidgets.QMessageBox()
+        msg.setWindowTitle("Path No Found")
+        msg.setText("Your entered path doesn't exists!")
+        x = msg.exec()
+
+    def remove_buttons(self):
+        for b in self.buttons:
+            self.gridLayout_2.removeItem(b)
 
 
 if __name__ == "__main__":
     import sys
+
     with open('search.txt') as fp:
         query = fp.read()
 
@@ -143,9 +167,8 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
 
-    data_obj=data.Read(query)
+    data_obj = data.Read(query)
 
-
-    ui.setupUi(MainWindow,data_obj)
+    ui.setupUi(MainWindow, data_obj)
     MainWindow.show()
     sys.exit(app.exec_())

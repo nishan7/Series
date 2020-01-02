@@ -23,6 +23,7 @@ class Read:
 
     def read(self):
         if self.path =='': return
+        self.files_dict=dict()
         print(self.path)
         with OpenKey(HKEY_CURRENT_USER, self.key_string) as key:
             order = 0
@@ -66,6 +67,10 @@ class Read:
                 except:
                     pass
             self.display_dict = {**self.files_dict, **js}
+        print("---------self.files_dict----------")
+        print(json.dumps(self.files_dict, indent=4))
+        print("------------js----------------")
+        print(json.dumps(js, indent=4))
         print(json.dumps(self.display_dict, indent=4))
         self.store_as_json(self.display_dict)
         print("saved display_dict")
