@@ -112,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.pushButton.setSizePolicy(sizePolicy)
             placeholder = re.match(r'.*\\(.+?)$', self.data_obj.display_dict[item][0]).group(1)
             self.pushButton.setText(" " + placeholder)
-            self.pushButton.setMinimumWidth(200)
+            self.pushButton.setMinimumWidth(220)
             self.pushButton.setMinimumHeight(150)
 
             self.pushButton.setObjectName(item)
@@ -165,25 +165,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.scrollArea.update()
         self.scrollArea.repaint()
 
-    def invalid_path_alert(self):
-        msg = QtWidgets.QMessageBox()
-        msg.setWindowTitle("Path No Found")
-        msg.setText("Your entered path doesn't exists!")
-        x = msg.exec()
+    # def invalid_path_alert(self):
+    #     msg = QtWidgets.QMessageBox()
+    #     msg.setWindowTitle("Path No Found")
+    #     msg.setText("Your entered path doesn't exists!")
+    #     x = msg.exec()
 
-    def remove_buttons(self):
-        for b in self.buttons:
-            self.gridLayout_2.removeItem(b)
-
-    # def closeEvent(self, *args, **kwargs):
-    #     super(QtGui.QMainWindow, self).closeEvent(*args, **kwargs)
-    #     print("Close")
-    #
-    # def closeEvent(self):
-    #     #Your desired functionality here
-    #     print('Close button pressed')
-    #     import sys
-    #     sys.exit(0)
 
 if __name__ == "__main__":
     with open('search.txt') as fp:
